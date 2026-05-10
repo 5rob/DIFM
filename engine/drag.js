@@ -2,7 +2,9 @@
 // commits the move into step.position so auto-layout treats it as pinned.
 
 import { view } from "./viewport.js";
-import { setPosition } from "./store.js";
+import { setPosition, getPlan } from "./store.js";
+import { renderConnectors } from "./connectors.js";
+import { getPositions } from "./render.js";
 
 const DRAG_THRESHOLD = 8;
 const INTERACTIVE_SEL =
@@ -10,6 +12,16 @@ const INTERACTIVE_SEL =
 
 let downAt = null;
 let dragging = null;
+let rafPending = false;
+
+function scheduleConnectorRedraw() {
+  if (rafPending) return;
+  rafPending = true;
+  requestAnimationFrame(() => {
+    rafPending = false;
+    renderConnectors(getPlan(), getPositions());
+  });
+}
 
 export function bindDrag() {
   const viewport = document.getElementById("viewport");
@@ -52,6 +64,7 @@ export function bindDrag() {
     const wy = dragging.startTop + dy / view.scale;
     dragging.node.style.left = wx + "px";
     dragging.node.style.top = wy + "px";
+    scheduleConnectorRedraw();
     e.preventDefault();
   });
 
