@@ -206,9 +206,28 @@ body.wiring { cursor: crosshair; }
   background: rgba(30, 41, 59, 0.85);
 }
 .node[data-kind="automation"]    { border-left: 3px solid var(--accent-2); }
-.node[data-kind="browser-embed"] { border-left: 3px solid var(--warm); }
+.node[data-kind="browser-embed"] {
+  border-left: 3px solid var(--warm);
+  width: 560px;
+}
 .node[data-kind="decision"]      { border-left: 3px dashed var(--muted); }
 .node[data-kind="summary"]       { border-left: 3px solid var(--accent); }
+
+.embed-frame {
+  width: 100%;
+  height: 380px;
+  margin-top: 8px;
+  border: 1px solid var(--node-border);
+  border-radius: 6px;
+  background: #fff;
+  display: block;
+}
+.embed-blocked-hint {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--muted);
+  font-style: italic;
+}
 
 .choice-list {
   display: flex;

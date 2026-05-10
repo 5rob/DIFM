@@ -180,13 +180,27 @@ function renderBody(body, step, plan) {
         note.textContent = step.handoffReason;
         body.appendChild(note);
       }
+
+      const frame = document.createElement("iframe");
+      frame.className = "embed-frame";
+      frame.src = step.url;
+      frame.referrerPolicy = "no-referrer";
+      frame.setAttribute("allow", "clipboard-read; clipboard-write");
+      body.appendChild(frame);
+
+      const hint = document.createElement("div");
+      hint.className = "embed-blocked-hint";
+      hint.textContent = "If the page didn't appear, the site refused embedding — open it in a new tab below.";
+      body.appendChild(hint);
+
       const link = document.createElement("a");
       link.className = "embed-link";
       link.href = step.url;
       link.target = "_blank";
       link.rel = "noopener noreferrer";
-      link.textContent = `↗ Open ${truncate(step.url, 48)}`;
+      link.textContent = `↗ Open ${truncate(step.url, 48)} in new tab`;
       body.appendChild(link);
+
       const b = document.createElement("button");
       b.className = "choice";
       b.style.marginTop = "8px";
