@@ -102,38 +102,67 @@ html, body {
   transition: none;
 }
 
-/* Top (in) and bottom (out) connection dots — telegraph the flow. */
-.node::before,
-.node::after {
-  content: "";
+/* Top (in) and bottom (out) connection dots — interactive: drag from out
+   to another node's in to wire them up. */
+.dot {
   position: absolute;
   left: 50%;
-  width: 9px;
-  height: 9px;
-  margin-left: -4.5px;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
   border-radius: 50%;
   background: var(--accent);
   box-shadow:
     0 0 6px var(--accent),
     0 0 14px rgba(34, 211, 238, 0.5);
   opacity: 0.5;
-  pointer-events: none;
-  z-index: 2;
+  z-index: 3;
+  cursor: crosshair;
+  touch-action: none;
+  transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s;
 }
-.node::before { top: -5px; }
-.node::after  { bottom: -5px; }
+.dot.in  { top: -6px; }
+.dot.out { bottom: -6px; }
+.dot:hover {
+  opacity: 1;
+  transform: scale(1.25);
+  box-shadow: 0 0 10px var(--accent), 0 0 22px rgba(34, 211, 238, 0.75);
+}
 
-.node[data-status="active"]::after {
+.node[data-status="active"] .dot.out {
   opacity: 0.9;
   animation: dotPulse 1.8s ease-in-out infinite;
 }
-.node[data-status="completed"]::before,
-.node[data-status="completed"]::after {
+.node[data-status="completed"] .dot {
   opacity: 0.35;
 }
 @keyframes dotPulse {
-  0%, 100% { opacity: 0.55; box-shadow: 0 0 6px var(--accent), 0 0 14px rgba(34,211,238,0.5); }
-  50%      { opacity: 1;    box-shadow: 0 0 10px var(--accent), 0 0 22px rgba(34,211,238,0.7); }
+  0%, 100% {
+    opacity: 0.55;
+    box-shadow: 0 0 6px var(--accent), 0 0 14px rgba(34, 211, 238, 0.5);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 10px var(--accent), 0 0 22px rgba(34, 211, 238, 0.75);
+  }
+}
+
+/* While the user is dragging a wire, highlight every input dot as a
+   target and dim the rest of the canvas slightly. */
+body.wiring .dot.in {
+  opacity: 0.95;
+  animation: dotPulse 1s ease-in-out infinite;
+}
+body.wiring { cursor: crosshair; }
+
+.ghost-wire {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px rgba(34, 211, 238, 0.7));
+  pointer-events: none;
 }
 .node[data-status="active"] {
   border-color: var(--accent);

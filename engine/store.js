@@ -57,3 +57,15 @@ export function setPosition(stepId, position) {
   step.position = position;
   emit();
 }
+
+export function addEdge(edge) {
+  state.plan.edges.push(edge);
+  emit();
+}
+
+// Cut any existing wire(s) leading into target, then connect from source.
+export function replaceIncomingEdges(targetStepId, sourceStepId, kind = "next") {
+  state.plan.edges = state.plan.edges.filter((e) => e.to !== targetStepId);
+  state.plan.edges.push({ from: sourceStepId, to: targetStepId, kind });
+  emit();
+}

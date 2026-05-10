@@ -8,7 +8,7 @@ import { getPositions } from "./render.js";
 
 const DRAG_THRESHOLD = 8;
 const INTERACTIVE_SEL =
-  "button, textarea, input, a, select, .choice, .dropzone";
+  "button, textarea, input, a, select, .choice, .dropzone, .dot";
 
 let downAt = null;
 let dragging = null;

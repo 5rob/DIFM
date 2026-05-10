@@ -5,6 +5,7 @@ import { loadPlan, getPlan, addStep } from "./store.js";
 import { startRender } from "./render.js";
 import { bindRadial } from "./radial.js";
 import { bindDrag } from "./drag.js";
+import { bindWire } from "./wire.js";
 import { focusOn, zoomAt, view, applyTransform } from "./viewport.js";
 
 const DEFAULT_PLAN = "schema/examples/au-tax-return.plan.json";
@@ -23,6 +24,7 @@ async function boot() {
   loadPlan(plan);
   startRender();
   focusOn(180, 80, 1);
+  bindWire();
   bindRadial(handlePick);
   bindDrag();
   wireZoomControls();

@@ -67,6 +67,18 @@ function renderStep(step, plan) {
   el.appendChild(body);
   renderBody(body, step, plan);
 
+  const dotIn = document.createElement("div");
+  dotIn.className = "dot in";
+  dotIn.dataset.stepId = step.id;
+  dotIn.dataset.dot = "in";
+  el.appendChild(dotIn);
+
+  const dotOut = document.createElement("div");
+  dotOut.className = "dot out";
+  dotOut.dataset.stepId = step.id;
+  dotOut.dataset.dot = "out";
+  el.appendChild(dotOut);
+
   return el;
 }
 
