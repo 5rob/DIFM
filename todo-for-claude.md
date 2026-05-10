@@ -15,6 +15,14 @@ An interactive, infinitely zoomable Excalidraw canvas that guides users step-by-
 
 This is a **thought map in progress**, not just a form.
 
+## Initial User Description (Source)
+
+> **User Prompt (Rob):**
+>
+> _"I think full automation is the wrong way to go. I think a better idea is to build an interactive dashboard specifically for an AI assisted tax management. I'm picturing an interactive hand-holdy AI Tax Return Guide Friend. The screen is the canvas. An infinitely panable and zoomable lightly gridded dark surface where the guide can, on the fly, build things like informational graphics or text or file input UIs, HTML browser windows for displaying the browser automated navigation but allow for manual interaction too... [detailed structure]"_
+
+See full context: `~/.hermes/memories/transcripts/First Conversation - 2026-02-12.txt` (or identical upstream)
+
 ## Current State (Static MVP)
 
 - ✅ Canvas renders at `http://localhost:8080` via Python `http.server`
@@ -40,7 +48,7 @@ This is a **thought map in progress**, not just a form.
 - Guide user to enter CAPTCHA & password
 - After login:
   - Parse dashboard
-  - Highlight obligations
+ - Highlight obligations
   - Suggest deductions
 
 ### 3. User Input Flow
@@ -73,7 +81,7 @@ This is a **thought map in progress**, not just a form.
    - Maintain scroll/y-position on update
 2. Add `radial-menu` component:
    - SVG circle + 8-quadrant speak-easy menu
-   - options = ["text", "file", "browser", "image", "delete", "reply", "copy", "rename"]
+   - options = ["text", "file", "browser", "image", "delete", "reply", "copy", "rename"}
    - emits `user:addNode(type, content)`
 3. Add `glow-line` lib:
    - On new node:
