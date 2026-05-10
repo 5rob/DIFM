@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://difm.dev/schemas/plan.schema.json",
+  "title": "DIFM Plan",
+  "description": "Runtime artifact describing a guided journey rendered on the DIFM canvas.",
+  "type": "object",
+  "required": ["id", "version", "title", "rootStepId", "steps", "edges"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string" },
+    "version": { "type": "integer", "const": 1 },
+    "title": { "type": "string" },
+    "summary": { "type": "string" },
+    "createdAt": { "type": "string" },
+    "context": { "type": "object", "additionalProperties": true },
+    "rootStepId": { "type": "string" },
+    "steps": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/Step" }
+    },
+    "edges": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Edge" }
+    },
+    "state": { "$ref": "#/$defs/State" }
+  },
+  "$defs": {
+    "Step": {
+      "type": "object",
+      "required": ["id", "kind", "title"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "ai-message",
+            "ai-question",
+            "user-input",
+            "automation",
+            "browser-embed",
+            "decision",
+            "summary"
+          ]
+        },
+        "title": { "type": "string" },
+        "position": {
+          "type": "object",
+          "required": ["x", "y"],
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" }
+          }
+        },
+        "dependsOn": { "type": "array", "items": { "type": "string" } },
+        "meta": { "type": "object", "additionalProperties": true },
+
+        "content": { "type": "string" },
+
+        "prompt": { "type": "string" },
+        "expectedInputs": {
+          "type": "array",
+          "items": {
+            "enum": ["text", "file", "image", "choice", "browser-confirm"]
+          }
+        },
+        "choices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "label"],
+            "properties": {
+              "id": { "type": "string" },
+              "label": { "type": "string" }
+            }
+          }
+        },
+
+        "inputType": {
+          "enum": ["text", "file", "image", "browser-confirm"]
+        },
+        "value": {},
+        "anchorStepId": { "type": "string" },
+
+        "tool": { "type": "string" },
+        "args": { "type": "object", "additionalProperties": true },
+        "outputs": { "type": "array", "items": { "type": "string" } },
+
+        "url": { "type": "string", "format": "uri" },
+        "mode": { "enum": ["view", "interact", "handoff"] },
+        "handoffReason": { "type": "string" },
+
+        "condition": { "type": "string" },
+        "branches": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+
+        "sourceStepIds": { "type": "array", "items": { "type": "string" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "ai-message" } } },
+          "then": { "required": ["content"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "ai-question" } } },
+          "then": { "required": ["prompt", "expectedInputs"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "user-input" } } },
+          "then": { "required": ["inputType", "anchorStepId"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "automation" } } },
+          "then": { "required": ["tool"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "browser-embed" } } },
+          "then": { "required": ["url", "mode"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "decision" } } },
+          "then": { "required": ["condition", "branches"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "summary" } } },
+          "then": { "required": ["sourceStepIds", "content"] }
+        }
+      ]
+    },
+    "Edge": {
+      "type": "object",
+      "required": ["from", "to", "kind"],
+      "additionalProperties": false,
+      "properties": {
+        "from": { "type": "string" },
+        "to": { "type": "string" },
+        "kind": { "enum": ["next", "reply", "derived", "branch"] },
+        "label": { "type": "string" }
+      }
+    },
+    "State": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "currentStepId": { "type": "string" },
+        "stepStatus": {
+          "type": "object",
+          "additionalProperties": {
+            "enum": ["pending", "active", "completed", "skipped", "blocked"]
+          }
+        },
+        "collected": { "type": "object", "additionalProperties": true }
+      }
+    }
+  }
+}

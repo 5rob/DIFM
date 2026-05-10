@@ -1,0 +1,123 @@
+{
+  "id": "au_tax_2026",
+  "version": 1,
+  "title": "File my 2026 Australian tax return",
+  "summary": "myGov login, prefill review, deductions, lodge.",
+  "createdAt": "2026-05-10T00:00:00Z",
+  "context": { "country": "AU", "fy": "2025-26" },
+  "rootStepId": "welcome",
+  "steps": {
+    "welcome": {
+      "id": "welcome",
+      "kind": "ai-message",
+      "title": "G'day",
+      "content": "I'll walk you through your 2025-26 tax return. Tap-and-hold anywhere on the canvas to add a note, file, or reply. We'll go one step at a time."
+    },
+    "ask_situation": {
+      "id": "ask_situation",
+      "kind": "ai-question",
+      "title": "Your situation this year",
+      "prompt": "Briefly: what's your work situation? PAYG employee, sole trader, both? Investments, capital gains, crypto, rental property?",
+      "expectedInputs": ["text"]
+    },
+    "mygov_login": {
+      "id": "mygov_login",
+      "kind": "browser-embed",
+      "title": "Log into myGov",
+      "url": "https://my.gov.au/",
+      "mode": "handoff",
+      "handoffReason": "Enter your username, password, and SMS code yourself. I never see them."
+    },
+    "capture_dashboard": {
+      "id": "capture_dashboard",
+      "kind": "automation",
+      "title": "Read your ATO dashboard",
+      "tool": "browser.snapshot",
+      "args": { "selector": "#ato-dashboard" },
+      "outputs": ["obligations", "messages", "prefill_status"]
+    },
+    "summarise_obligations": {
+      "id": "summarise_obligations",
+      "kind": "summary",
+      "title": "What I found",
+      "sourceStepIds": ["capture_dashboard"],
+      "content": "Your 2025-26 income statement is finalised. Prefilled data is available. No outstanding lodgments before this year."
+    },
+    "ask_deductions": {
+      "id": "ask_deductions",
+      "kind": "ai-question",
+      "title": "Anything to claim?",
+      "prompt": "Work-from-home hours, car kms, donations, professional fees, education, tools, subscriptions? Drop receipts on the canvas — I'll extract amounts.",
+      "expectedInputs": ["text", "file", "image"]
+    },
+    "decide_cgt": {
+      "id": "decide_cgt",
+      "kind": "decision",
+      "title": "Capital gains?",
+      "condition": "ask_situation.value mentions stock, shares, crypto, or capital",
+      "branches": {
+        "yes": "cgt_collect",
+        "no": "review_prefill"
+      }
+    },
+    "cgt_collect": {
+      "id": "cgt_collect",
+      "kind": "ai-question",
+      "title": "CGT events",
+      "prompt": "Upload your broker / exchange annual statement, or list disposals (asset, acquired date, sold date, proceeds, cost base).",
+      "expectedInputs": ["file", "text"]
+    },
+    "review_prefill": {
+      "id": "review_prefill",
+      "kind": "browser-embed",
+      "title": "Review prefilled return",
+      "url": "https://my.gov.au/mygov/services/ato/myTax",
+      "mode": "interact",
+      "handoffReason": "Verify income, interest, dividends, and private health insurance look right."
+    },
+    "confirm_lodge": {
+      "id": "confirm_lodge",
+      "kind": "ai-question",
+      "title": "Ready to lodge?",
+      "prompt": "I'll submit your return. You can amend later through myGov. Confirm to lodge.",
+      "expectedInputs": ["choice"],
+      "choices": [
+        { "id": "lodge", "label": "Lodge now" },
+        { "id": "hold", "label": "Hold off" }
+      ]
+    },
+    "lodge": {
+      "id": "lodge",
+      "kind": "automation",
+      "title": "Submit return",
+      "tool": "browser.click",
+      "args": { "selector": "button[name=lodge]" }
+    },
+    "outcome": {
+      "id": "outcome",
+      "kind": "summary",
+      "title": "Lodged",
+      "sourceStepIds": ["lodge"],
+      "content": "Return lodged. The ATO normally confirms an estimated outcome within two weeks; I'll surface it here when it lands."
+    }
+  },
+  "edges": [
+    { "from": "welcome", "to": "ask_situation", "kind": "next" },
+    { "from": "ask_situation", "to": "mygov_login", "kind": "next" },
+    { "from": "mygov_login", "to": "capture_dashboard", "kind": "next" },
+    { "from": "capture_dashboard", "to": "summarise_obligations", "kind": "derived" },
+    { "from": "summarise_obligations", "to": "ask_deductions", "kind": "next" },
+    { "from": "ask_deductions", "to": "decide_cgt", "kind": "next" },
+    { "from": "decide_cgt", "to": "cgt_collect", "kind": "branch", "label": "yes" },
+    { "from": "decide_cgt", "to": "review_prefill", "kind": "branch", "label": "no" },
+    { "from": "cgt_collect", "to": "review_prefill", "kind": "next" },
+    { "from": "review_prefill", "to": "confirm_lodge", "kind": "next" },
+    { "from": "confirm_lodge", "to": "lodge", "kind": "branch", "label": "lodge" },
+    { "from": "lodge", "to": "outcome", "kind": "derived" }
+  ],
+  "state": {
+    "currentStepId": "welcome",
+    "stepStatus": { "welcome": "active" },
+    "collected": {}
+  }
+}

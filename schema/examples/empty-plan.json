@@ -1,0 +1,21 @@
+{
+  "id": "empty",
+  "version": 1,
+  "title": "New plan",
+  "summary": "A blank canvas waiting for a goal.",
+  "rootStepId": "welcome",
+  "steps": {
+    "welcome": {
+      "id": "welcome",
+      "kind": "ai-message",
+      "title": "What would you like to accomplish?",
+      "content": "Tell me what you're trying to do online — file a return, dispute a charge, port a number, claim a refund. Tap-and-hold anywhere to add a note, file, or reply, and I'll grow the plan from there."
+    }
+  },
+  "edges": [],
+  "state": {
+    "currentStepId": "welcome",
+    "stepStatus": { "welcome": "active" },
+    "collected": {}
+  }
+}
