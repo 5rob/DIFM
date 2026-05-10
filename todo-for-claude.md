@@ -19,7 +19,7 @@ This is a **thought map in progress**, not just a form.
 
 > **User Prompt (Rob):**
 >
-> _"I think full automation is the wrong way to go. I think a better idea is to build an interactive dashboard specifically for an AI assisted tax management. I'm picturing an interactive hand-holdy AI Tax Return Guide Friend. The screen is the canvas. An infinitely panable and zoomable lightly gridded dark surface where the guide can, on the fly, build things like informational graphics or text or file input UIs, HTML browser windows for displaying the browser automated navigation but allow for manual interaction too... [detailed structure]"_
+> _"I think full automation is the wrong way to go. I think a better idea is to build an interactive dashboard specifically for an AI assisted tax management. I'm picturing an interactive hand-holdy AI Tax Return Guide Friend. The screen is the canvas. An infinitely panable and zoomable lightly gridded dark surface where the guide can, on the fly, build things like informational graphics or text or file, HTML browser windows for displaying the browser automated navigation but allow for manual interaction too for things the AI can't do like captchas or personal information entry. This AI will use the canvas to spawn a vertical chain of all of these elements one by one as a personalised guided / partly automated tour on how to handle whatever admin needs you have with your taxes. It will walk you through, and explain along the way, assessing your situation, asking questions about what you wish to achieve, building a plan file and executing it step by step WITH the user. The user has a special way of adding their own UI elements that contribute to the flow of the process. At any time they can click and hold which will bring up a radial menu with options for text, image, file, browser box, delete object, copy object, rename object. Where it is clicked and held or what every it is clicked and held over on the screen, will be part of the context to go with whatever is picked. You asked a question with a text graphic? I tap and hold your text and choose the text option. A text input box appears on the canvas connected to your question text via a glowing line. I enter my reply and hit send. This triggers the AI guide to continue with the plan document using the context of my reply until next user interaction is required, making sure to drop chained UI elements showing the journey of the process along the way."_
 
 See full context: `~/.hermes/memories/transcripts/First Conversation - 2026-02-12.txt` (or identical upstream)
 
@@ -48,7 +48,7 @@ See full context: `~/.hermes/memories/transcripts/First Conversation - 2026-02-1
 - Guide user to enter CAPTCHA & password
 - After login:
   - Parse dashboard
- - Highlight obligations
+  - Highlight obligations
   - Suggest deductions
 
 ### 3. User Input Flow
@@ -60,7 +60,7 @@ See full context: `~/.hermes/memories/transcripts/First Conversation - 2026-02-1
 ## UI Mechanics
 
 - **Canvas**: Excalidraw JSON injected at init
-- **Motion**: Zoomable, pannable, infinite (maintain zoom on new nodes)
+- **Motion**: Zoomable, pannable, infinite (maintain zoom `on new nodes)
 - **Glowing lines**: `<path>` with animated gradient + `.glow-link` CSS
 - **User input nodes**: Circular hotspots, pulse on active, expand on hold
 
@@ -81,13 +81,13 @@ See full context: `~/.hermes/memories/transcripts/First Conversation - 2026-02-1
    - Maintain scroll/y-position on update
 2. Add `radial-menu` component:
    - SVG circle + 8-quadrant speak-easy menu
-   - options = ["text", "file", "browser", "image", "delete", "reply", "copy", "rename"}
+   - options = ["text", "file", "browser", "image", "delete", "reply", "copy", "rename"]
    - emits `user:addNode(type, content)`
 3. Add `glow-line` lib:
-   - On new node:
-     - draw `begin 300,400 -> end 320,420` with gradient
-     - cycle hue-saturation every 2s
-     - `.glow-line { filter: drop-shadow(0 0 6px #bic); }`
+  - On new node:
+    - draw `begin 300,400 -> end 320,420` with gradient
+    - cycle hue-saturation every 2s
+    - `.glow-line { filter: drop-shadow(0 0 6px #00bcd4); }`
 4. Ensure mobile:
    - disable pinch-zoom on canvas container
    - two-finger pan only
