@@ -1,0 +1,13 @@
+{
+  "name": "difm-canvas",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "echo 'No build step'",
+    "dev": "echo 'No dev server'"
+  },
+  "vercel": {
+    "buildCommand": "npm run build",
+    "devCommand": "npm run dev",
+    "outputDirectory": "templates"
+  }
+}
