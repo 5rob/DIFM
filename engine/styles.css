@@ -86,6 +86,20 @@ html, body {
   backdrop-filter: blur(6px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   transition: border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
+  cursor: move;
+  touch-action: none;
+}
+.node textarea, .node input[type="file"] { cursor: text; }
+.node textarea { cursor: text; }
+.node button, .node a, .node .choice, .node .dropzone { cursor: pointer; }
+
+.node.dragging {
+  z-index: 10;
+  cursor: grabbing;
+  box-shadow:
+    0 0 0 1px var(--accent),
+    0 20px 60px rgba(34, 211, 238, 0.35);
+  transition: none;
 }
 
 /* Top (in) and bottom (out) connection dots — telegraph the flow. */

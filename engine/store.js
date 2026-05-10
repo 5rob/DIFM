@@ -50,3 +50,10 @@ export function setStatus(stepId, status) {
   if (status === "active") state.plan.state.currentStepId = stepId;
   emit();
 }
+
+export function setPosition(stepId, position) {
+  const step = state.plan.steps[stepId];
+  if (!step) return;
+  step.position = position;
+  emit();
+}

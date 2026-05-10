@@ -4,6 +4,7 @@
 import { loadPlan, getPlan, addStep } from "./store.js";
 import { startRender } from "./render.js";
 import { bindRadial } from "./radial.js";
+import { bindDrag } from "./drag.js";
 import { focusOn, zoomAt, view, applyTransform } from "./viewport.js";
 
 const DEFAULT_PLAN = "schema/examples/au-tax-return.plan.json";
@@ -23,25 +24,29 @@ async function boot() {
   startRender();
   focusOn(180, 80, 1);
   bindRadial(handlePick);
+  bindDrag();
   wireZoomControls();
   setHudTitle(plan.title);
 }
 
 function handlePick(id, ctx) {
   const plan = getPlan();
+  const anchored = !!ctx.anchorStepId;
   const anchorId = ctx.anchorStepId || plan.rootStepId;
   const newId = `node_${Date.now().toString(36)}`;
-  const pos = ctx.world;
+  // Anchored nodes flow with auto-layout; free-floaters pin at tap location.
+  const positionField = anchored ? {} : { position: ctx.world };
+  const edge = anchored
+    ? { from: anchorId, to: newId, kind: "reply" }
+    : null;
 
   if (id === "text" || id === "reply") {
     addStep(
       {
         id: newId, kind: "user-input", title: id === "reply" ? "Reply" : "Note",
-        inputType: "text", anchorStepId: anchorId, position: pos,
+        inputType: "text", anchorStepId: anchorId, ...positionField,
       },
-      ctx.anchorStepId
-        ? { from: anchorId, to: newId, kind: "reply" }
-        : null
+      edge
     );
     return;
   }
@@ -49,11 +54,9 @@ function handlePick(id, ctx) {
     addStep(
       {
         id: newId, kind: "user-input", title: "File",
-        inputType: "file", anchorStepId: anchorId, position: pos,
+        inputType: "file", anchorStepId: anchorId, ...positionField,
       },
-      ctx.anchorStepId
-        ? { from: anchorId, to: newId, kind: "reply" }
-        : null
+      edge
     );
     return;
   }
@@ -61,11 +64,9 @@ function handlePick(id, ctx) {
     addStep(
       {
         id: newId, kind: "user-input", title: "Image",
-        inputType: "image", anchorStepId: anchorId, position: pos,
+        inputType: "image", anchorStepId: anchorId, ...positionField,
       },
-      ctx.anchorStepId
-        ? { from: anchorId, to: newId, kind: "reply" }
-        : null
+      edge
     );
     return;
   }
@@ -75,11 +76,9 @@ function handlePick(id, ctx) {
     addStep(
       {
         id: newId, kind: "browser-embed", title: "Browser",
-        url, mode: "view", position: pos,
+        url, mode: "view", ...positionField,
       },
-      ctx.anchorStepId
-        ? { from: anchorId, to: newId, kind: "reply" }
-        : null
+      edge
     );
     return;
   }
