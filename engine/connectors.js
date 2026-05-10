@@ -18,16 +18,16 @@ export function renderConnectors(plan, positions) {
     const fr = nodeRect(edge.from) || fallbackRect(a);
     const tr = nodeRect(edge.to) || fallbackRect(b);
 
-    const goingRight = tr.left >= fr.right - 20;
-    const x1 = (goingRight ? fr.right : fr.left) + SVG_OFFSET;
-    const y1 = fr.midY + SVG_OFFSET;
-    const x2 = (goingRight ? tr.left : tr.right) + SVG_OFFSET;
-    const y2 = tr.midY + SVG_OFFSET;
+    // Anchor at the bottom-center of the source and the top-center of the
+    // target. Vertical bezier handles produce a natural downward S-curve
+    // even when the target is offset to a side column.
+    const x1 = fr.midX + SVG_OFFSET;
+    const y1 = fr.bottom + SVG_OFFSET;
+    const x2 = tr.midX + SVG_OFFSET;
+    const y2 = tr.top + SVG_OFFSET;
 
-    const dx = Math.max(40, Math.abs(x2 - x1) / 2);
-    const c1x = goingRight ? x1 + dx : x1 - dx;
-    const c2x = goingRight ? x2 - dx : x2 + dx;
-    const d = `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`;
+    const dy = Math.max(40, Math.abs(y2 - y1) / 2);
+    const d = `M ${x1} ${y1} C ${x1} ${y1 + dy}, ${x2} ${y2 - dy}, ${x2} ${y2}`;
 
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     path.setAttribute("d", d);

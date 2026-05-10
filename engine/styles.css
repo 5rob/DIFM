@@ -87,6 +87,40 @@ html, body {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   transition: border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
 }
+
+/* Top (in) and bottom (out) connection dots — telegraph the flow. */
+.node::before,
+.node::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  margin-left: -4.5px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow:
+    0 0 6px var(--accent),
+    0 0 14px rgba(34, 211, 238, 0.5);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 2;
+}
+.node::before { top: -5px; }
+.node::after  { bottom: -5px; }
+
+.node[data-status="active"]::after {
+  opacity: 0.9;
+  animation: dotPulse 1.8s ease-in-out infinite;
+}
+.node[data-status="completed"]::before,
+.node[data-status="completed"]::after {
+  opacity: 0.35;
+}
+@keyframes dotPulse {
+  0%, 100% { opacity: 0.55; box-shadow: 0 0 6px var(--accent), 0 0 14px rgba(34,211,238,0.5); }
+  50%      { opacity: 1;    box-shadow: 0 0 10px var(--accent), 0 0 22px rgba(34,211,238,0.7); }
+}
 .node[data-status="active"] {
   border-color: var(--accent);
   box-shadow: 0 0 0 1px var(--accent), 0 10px 40px rgba(34, 211, 238, 0.18);

@@ -11,10 +11,10 @@ export function autoLayout(plan) {
   const colNextY = {};
   const visited = new Set();
 
-  function place(id, col) {
+  function place(id, col, minY) {
     if (visited.has(id)) return;
     visited.add(id);
-    const y = colNextY[col] || 0;
+    const y = Math.max(colNextY[col] || 0, minY || 0);
     pos[id] = { x: col * COL_W, y };
     colNextY[col] = y + NODE_H_EST + V_GAP;
 
@@ -22,12 +22,14 @@ export function autoLayout(plan) {
     for (const edge of outs) {
       const nextCol =
         edge.kind === "branch" || edge.kind === "reply" ? col + 1 : col;
-      place(edge.to, nextCol);
+      // Children start at least at parent's y so side branches don't snap
+      // up to the top of their column.
+      place(edge.to, nextCol, y);
     }
   }
 
   if (plan.rootStepId && plan.steps[plan.rootStepId]) {
-    place(plan.rootStepId, 0);
+    place(plan.rootStepId, 0, 0);
   }
 
   for (const id of Object.keys(plan.steps)) {
